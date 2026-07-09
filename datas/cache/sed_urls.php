@@ -1,6 +1,6 @@
 <?php
 /* Auto-generated URL cache. Do not edit manually. */
-/* Generated: 2026-02-26 19:10:18 */
+/* Generated: 2026-07-08 12:09:45 */
 
 $sed_urlrewrite = array (
   0 => 
@@ -50,123 +50,123 @@ $sed_urlrewrite = array (
   ),
   9 => 
   array (
-    'cond' => '#^/view/([a-zA-Z0-9]+)(/?)$#',
-    'rule' => 'modules/view/view.php?v=$1',
+    'cond' => '#^/rss/([a-zA-Z0-9]+)(/?)$#',
+    'rule' => 'system/core/plug/plug.php?e=rss&m=$1',
   ),
   10 => 
   array (
-    'cond' => '#^/rss/([a-zA-Z0-9]+)(/?)$#',
-    'rule' => 'modules/rss/rss.php?m=$1',
+    'cond' => '#^/rss(/?)$#',
+    'rule' => 'system/core/plug/plug.php?e=rss',
   ),
   11 => 
   array (
-    'cond' => '#^/rss(/?)$#',
-    'rule' => 'modules/rss/rss.php',
+    'cond' => '#^/sitemap_([a-zA-Z0-9]+)\\.xml$#',
+    'rule' => 'system/core/plug/plug.php?e=sitemap&m=$1',
   ),
   12 => 
   array (
-    'cond' => '#^/sitemap_([a-zA-Z0-9]+)\\.xml$#',
-    'rule' => 'modules/sitemap/sitemap.php?m=$1',
+    'cond' => '#^/sitemap\\.xml$#',
+    'rule' => 'system/core/plug/plug.php?e=sitemap',
   ),
   13 => 
-  array (
-    'cond' => '#^/sitemap\\.xml$#',
-    'rule' => 'modules/sitemap/sitemap.php',
-  ),
-  14 => 
   array (
     'cond' => '#^/polls/([a-zA-Z0-9]+)(/?)$#',
     'rule' => 'modules/polls/polls.php?id=$1',
   ),
-  15 => 
+  14 => 
   array (
     'cond' => '#^/polls(/?)$#',
     'rule' => 'modules/polls/polls.php',
   ),
-  16 => 
+  15 => 
   array (
     'cond' => '#^/gallery/pic/([0-9]+)(/?)$#',
     'rule' => 'modules/gallery/gallery.php?id=$1',
   ),
-  17 => 
+  16 => 
   array (
     'cond' => '#^/gallery/([0-9]+)(/?)$#',
     'rule' => 'modules/gallery/gallery.php?f=$1',
   ),
-  18 => 
+  17 => 
   array (
     'cond' => '#^/gallery(/?)$#',
     'rule' => 'modules/gallery/gallery.php',
   ),
-  19 => 
+  18 => 
   array (
     'cond' => '#^/pm/mess/([0-9]+)(/?)$#',
     'rule' => 'modules/pm/pm.php?id=$1',
   ),
-  20 => 
+  19 => 
   array (
     'cond' => '#^/pm/action/([a-zA-Z0-9]+)(/?)$#',
     'rule' => 'modules/pm/pm.php?m=$1',
   ),
-  21 => 
+  20 => 
   array (
     'cond' => '#^/pm/([a-zA-Z0-9]+)(/?)$#',
     'rule' => 'modules/pm/pm.php?f=$1',
   ),
-  22 => 
+  21 => 
   array (
     'cond' => '#^/pm(/?)$#',
     'rule' => 'modules/pm/pm.php',
   ),
-  23 => 
+  22 => 
   array (
     'cond' => '#^/forums/topics/([0-9]+)-([a-zA-Z0-9_-]+)(/?)$#',
     'rule' => 'modules/forums/forums.php?m=topics&s=$1&al=$2',
   ),
-  24 => 
+  23 => 
   array (
     'cond' => '#^/forums/topics/([0-9]+)(/?)$#',
     'rule' => 'modules/forums/forums.php?m=topics&s=$1',
   ),
-  25 => 
+  24 => 
   array (
     'cond' => '#^/forums/posts/([0-9]+)-([a-zA-Z0-9_-]+)(/?)$#',
     'rule' => 'modules/forums/forums.php?m=posts&q=$1&al=$2',
   ),
-  26 => 
+  25 => 
   array (
     'cond' => '#^/forums/posts/([0-9]+)(/?)$#',
     'rule' => 'modules/forums/forums.php?m=posts&q=$1',
   ),
-  27 => 
+  26 => 
   array (
     'cond' => '#^/forums/post/([0-9]+)-([a-zA-Z0-9_-]+)(/?)$#',
     'rule' => 'modules/forums/forums.php?m=posts&p=$1&al=$2',
   ),
-  28 => 
+  27 => 
   array (
     'cond' => '#^/forums/post/([0-9]+)(/?)$#',
     'rule' => 'modules/forums/forums.php?m=posts&p=$1',
   ),
-  29 => 
+  28 => 
   array (
     'cond' => '#^/forums/([a-zA-Z0-9]+)-([a-zA-Z0-9_-]+)(/?)$#',
     'rule' => 'modules/forums/forums.php?c=$1&al=$2',
   ),
-  30 => 
+  29 => 
   array (
     'cond' => '#^/forums/([a-zA-Z0-9]+)(/?)$#',
     'rule' => 'modules/forums/forums.php?c=$1',
   ),
-  31 => 
+  30 => 
   array (
     'cond' => '#^/forums(/?)$#',
     'rule' => 'modules/forums/forums.php',
   ),
-  32 => 
+  31 => 
   array (
     'cond' => '#^/contact(/?)$#',
     'rule' => 'system/core/plug/plug.php?e=contact',
+  ),
+  32 => 
+  array (
+    'cond' => '#^/tags(/?)$#',
+    'rule' => 'system/core/plug/plug.php?e=tags',
   ),
   33 => 
   array (
@@ -361,30 +361,55 @@ $sed_urltrans = array (
   array (
     0 => 
     array (
+      'params' => 'e=sitemap&m=*',
+      'rewrite' => 'sitemap_{m}.xml',
+    ),
+    1 => 
+    array (
+      'params' => 'e=sitemap',
+      'rewrite' => 'sitemap.xml',
+    ),
+    2 => 
+    array (
+      'params' => 'e=rss&m=*',
+      'rewrite' => 'rss/{m}',
+    ),
+    3 => 
+    array (
+      'params' => 'e=rss',
+      'rewrite' => 'rss',
+    ),
+    4 => 
+    array (
+      'params' => 'e=tags',
+      'rewrite' => 'tags',
+    ),
+    5 => 
+    array (
       'params' => 'e=whosonline',
       'rewrite' => 'whosonline',
     ),
-    1 => 
+    6 => 
     array (
       'params' => 'e=robots',
       'rewrite' => 'robots.txt',
     ),
-    2 => 
+    7 => 
     array (
       'params' => 'e=passrecover',
       'rewrite' => 'passrecover',
     ),
-    3 => 
+    8 => 
     array (
       'params' => 'e=contact',
       'rewrite' => 'contact',
     ),
-    4 => 
+    9 => 
     array (
       'params' => 'e=*',
       'rewrite' => 'plug/{e}',
     ),
-    5 => 
+    10 => 
     array (
       'params' => '',
       'rewrite' => 'plug',
@@ -437,52 +462,87 @@ $sed_urltrans = array (
       'rewrite' => 'index.php?module={sed_get_section()}',
     ),
   ),
-  'forums' => 
+  'users' => 
   array (
     0 => 
     array (
-      'params' => 'm=topics&s=*&al=*',
-      'rewrite' => 'forums/topics/{s}{al|sed_get_forums_urltrans}',
+      'params' => 'f=all&s=*&w=*&gm=*',
+      'rewrite' => 'users/group/{gm}/sort/{s}-{w}',
     ),
     1 => 
     array (
-      'params' => 'm=topics&s=*',
-      'rewrite' => 'forums/topics/{s}',
+      'params' => 'gm=*',
+      'rewrite' => 'users/group/{gm}',
     ),
     2 => 
     array (
-      'params' => 'm=posts&q=*&al=*',
-      'rewrite' => 'forums/posts/{q}{al|sed_get_forums_urltrans}',
+      'params' => 'f=all&s=*&w=*&g=*',
+      'rewrite' => 'users/maingroup/{g}/sort/{s}-{w}',
     ),
     3 => 
     array (
-      'params' => 'm=posts&q=*',
-      'rewrite' => 'forums/posts/{q}',
+      'params' => 'f=*&s=*&w=*',
+      'rewrite' => 'users/filter/{f}/sort/{s}-{w}',
     ),
     4 => 
     array (
-      'params' => 'm=posts&p=*&al=*',
-      'rewrite' => 'forums/post/{p}{al|sed_get_forums_urltrans}',
+      'params' => 'f=*',
+      'rewrite' => 'users/filter/{f}',
     ),
     5 => 
     array (
-      'params' => 'm=posts&p=*',
-      'rewrite' => 'forums/post/{p}',
+      'params' => 'g=*',
+      'rewrite' => 'users/maingroup/{g}',
     ),
     6 => 
     array (
-      'params' => 'c=*&al=*',
-      'rewrite' => 'forums/{c}{al|sed_get_forums_urltrans}',
+      'params' => 'm=auth&a=*',
+      'rewrite' => 'users/auth/{a}',
     ),
     7 => 
     array (
-      'params' => 'c=*',
-      'rewrite' => 'forums/{c}',
+      'params' => 'm=register&a=*',
+      'rewrite' => 'users/register/{a}',
     ),
     8 => 
     array (
+      'params' => 'm=*&a=*',
+      'rewrite' => 'users/{m}/{a}',
+    ),
+    9 => 
+    array (
+      'params' => 'm=details&id=*',
+      'rewrite' => 'users/details/{id}',
+    ),
+    10 => 
+    array (
+      'params' => 'm=edit&id=*',
+      'rewrite' => 'users/edit/{id}',
+    ),
+    11 => 
+    array (
+      'params' => 'm=*&id=*',
+      'rewrite' => 'users/{m}/{id}',
+    ),
+    12 => 
+    array (
+      'params' => 'm=auth',
+      'rewrite' => 'login',
+    ),
+    13 => 
+    array (
+      'params' => 'm=register',
+      'rewrite' => 'register',
+    ),
+    14 => 
+    array (
+      'params' => 'm=*',
+      'rewrite' => 'users/{m}',
+    ),
+    15 => 
+    array (
       'params' => '',
-      'rewrite' => 'forums',
+      'rewrite' => 'users',
     ),
   ),
   'page' => 
@@ -587,115 +647,6 @@ $sed_urltrans = array (
       'rewrite' => 'polls',
     ),
   ),
-  'rss' => 
-  array (
-    0 => 
-    array (
-      'params' => 'm=*',
-      'rewrite' => 'rss/{m}',
-    ),
-    1 => 
-    array (
-      'params' => '',
-      'rewrite' => 'rss',
-    ),
-  ),
-  'sitemap' => 
-  array (
-    0 => 
-    array (
-      'params' => 'm=*',
-      'rewrite' => 'sitemap_{m}.xml',
-    ),
-    1 => 
-    array (
-      'params' => '',
-      'rewrite' => 'sitemap.xml',
-    ),
-  ),
-  'users' => 
-  array (
-    0 => 
-    array (
-      'params' => 'f=all&s=*&w=*&gm=*',
-      'rewrite' => 'users/group/{gm}/sort/{s}-{w}',
-    ),
-    1 => 
-    array (
-      'params' => 'gm=*',
-      'rewrite' => 'users/group/{gm}',
-    ),
-    2 => 
-    array (
-      'params' => 'f=all&s=*&w=*&g=*',
-      'rewrite' => 'users/maingroup/{g}/sort/{s}-{w}',
-    ),
-    3 => 
-    array (
-      'params' => 'f=*&s=*&w=*',
-      'rewrite' => 'users/filter/{f}/sort/{s}-{w}',
-    ),
-    4 => 
-    array (
-      'params' => 'f=*',
-      'rewrite' => 'users/filter/{f}',
-    ),
-    5 => 
-    array (
-      'params' => 'g=*',
-      'rewrite' => 'users/maingroup/{g}',
-    ),
-    6 => 
-    array (
-      'params' => 'm=auth&a=*',
-      'rewrite' => 'users/auth/{a}',
-    ),
-    7 => 
-    array (
-      'params' => 'm=register&a=*',
-      'rewrite' => 'users/register/{a}',
-    ),
-    8 => 
-    array (
-      'params' => 'm=*&a=*',
-      'rewrite' => 'users/{m}/{a}',
-    ),
-    9 => 
-    array (
-      'params' => 'm=details&id=*',
-      'rewrite' => 'users/details/{id}',
-    ),
-    10 => 
-    array (
-      'params' => 'm=edit&id=*',
-      'rewrite' => 'users/edit/{id}',
-    ),
-    11 => 
-    array (
-      'params' => 'm=*&id=*',
-      'rewrite' => 'users/{m}/{id}',
-    ),
-    12 => 
-    array (
-      'params' => 'm=auth',
-      'rewrite' => 'login',
-    ),
-    13 => 
-    array (
-      'params' => 'm=register',
-      'rewrite' => 'register',
-    ),
-    14 => 
-    array (
-      'params' => 'm=*',
-      'rewrite' => 'users/{m}',
-    ),
-    15 => 
-    array (
-      'params' => '',
-      'rewrite' => 'users',
-    ),
-  ),
   'gallery' => 
   array (
     0 => 
@@ -712,6 +663,62 @@ $sed_urltrans = array (
     array (
       'params' => '',
       'rewrite' => 'gallery',
+    ),
+  ),
+  'forums' => 
+  array (
+    0 => 
+    array (
+      'params' => 'm=topics&s=*&al=*',
+      'rewrite' => 'forums/topics/{s}{al|sed_get_forums_urltrans}',
+    ),
+    1 => 
+    array (
+      'params' => 'm=topics&s=*',
+      'rewrite' => 'forums/topics/{s}',
+    ),
+    2 => 
+    array (
+      'params' => 'm=posts&q=*&al=*',
+      'rewrite' => 'forums/posts/{q}{al|sed_get_forums_urltrans}',
+    ),
+    3 => 
+    array (
+      'params' => 'm=posts&q=*',
+      'rewrite' => 'forums/posts/{q}',
+    ),
+    4 => 
+    array (
+      'params' => 'm=posts&p=*&al=*',
+      'rewrite' => 'forums/post/{p}{al|sed_get_forums_urltrans}',
+    ),
+    5 => 
+    array (
+      'params' => 'm=posts&p=*',
+      'rewrite' => 'forums/post/{p}',
+    ),
+    6 => 
+    array (
+      'params' => 'c=*&al=*',
+      'rewrite' => 'forums/{c}{al|sed_get_forums_urltrans}',
+    ),
+    7 => 
+    array (
+      'params' => 'c=*',
+      'rewrite' => 'forums/{c}',
+    ),
+    8 => 
+    array (
+      'params' => '',
+      'rewrite' => 'forums',
+    ),
+  ),
+  'captcha' => 
+  array (
+    0 => 
+    array (
+      'params' => '',
+      'rewrite' => 'captcha.png',
     ),
   ),
 );
