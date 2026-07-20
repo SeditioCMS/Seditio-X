@@ -3,7 +3,8 @@
 /* ====================
 [BEGIN_SED]
 File=plugins/search/search.setup.php
-Version=185
+Version=186
+Updated=2026-feb-26
 Date=2010-feb-05
 Type=Plugin
 Author=Seditio Team

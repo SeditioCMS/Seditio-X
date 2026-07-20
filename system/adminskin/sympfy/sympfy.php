@@ -7,8 +7,8 @@ https://seditio.org
 
 [BEGIN_SED]
 File=system/adminskin/sympfy/sympfy.php
-Version=185
-Updated=2026-feb-14
+Version=186
+Updated=2026-jul-17
 Type=Skin
 Name=Sympfy
 Author=Amro
@@ -17,7 +17,7 @@ Description=Official Admin skin
 [END_SED]
 ==================== */
 
-sed_add_javascript('system/javascript/autocomplete.js', true, 20);
+sed_add_javascript('system/assets/js/autocomplete.js', true, 20);
 sed_add_css('system/adminskin/sympfy/css/autocomplete.css', true, 20);
 
 $cfg['pagination'] = '<li class="page-item">%s</li>';

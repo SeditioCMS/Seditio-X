@@ -7,8 +7,8 @@ https://seditio.org
 
 [BEGIN_SED]
 File=modules/polls/polls.main.php
-Version=185
-Updated=2026-feb-14
+Version=186
+Updated=2026-jul-17
 Type=Module
 Author=Seditio Team
 Description=Polls
@@ -122,7 +122,7 @@ $out['subtitle'] = sed_title('polltitle', $title_tags, $title_data);
 if ($standalone) {
 	sed_sendheaders();
 
-	sed_add_javascript('system/javascript/core.js', true);
+	sed_add_javascript('system/assets/js/core.js', true);
 	sed_add_javascript($morejavascript);
 	sed_add_css($morecss);
 

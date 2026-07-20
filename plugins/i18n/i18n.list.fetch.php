@@ -7,7 +7,8 @@ https://seditio.org
 
 [BEGIN_SED]
 File=plugins/i18n/i18n.list.fetch.php
-Version=185
+Version=186
+Updated=2026-jul-10
 Type=Plugin
 [END_SED]
 

@@ -7,7 +7,8 @@ https://seditio.org
 
 [BEGIN_SED]
 File=plugins/tags/inc/tags.functions.php
-Version=185
+Version=186
+Updated=2026-jul-17
 Type=Plugin
 [END_SED]
 
@@ -531,7 +532,7 @@ function sed_tags_add_autocomplete()
 	if ($added) return;
 	$added = true;
 
-	sed_add_javascript('system/javascript/autocomplete.js', true);
+	sed_add_javascript('system/assets/js/autocomplete.js', true);
 	$min = isset($cfg['plugin']['tags']['autocomplete_minlen']) ? (int)$cfg['plugin']['tags']['autocomplete_minlen'] : 3;
 	sed_add_javascript(
 		"document.addEventListener('DOMContentLoaded',function(){"

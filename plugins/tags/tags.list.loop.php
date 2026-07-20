@@ -7,7 +7,8 @@ https://seditio.org
 
 [BEGIN_SED]
 File=plugins/tags/tags.list.loop.php
-Version=185
+Version=186
+Updated=2026-mar-19
 Type=Plugin
 [END_SED]
 

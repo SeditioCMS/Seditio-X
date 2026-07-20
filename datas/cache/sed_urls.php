@@ -1,6 +1,6 @@
 <?php
 /* Auto-generated URL cache. Do not edit manually. */
-/* Generated: 2026-07-10 09:04:34 */
+/* Generated: 2026-07-17 09:35:44 */
 
 $sed_urlrewrite = array (
   0 => 
@@ -25,320 +25,310 @@ $sed_urlrewrite = array (
   ),
   4 => 
   array (
-    'cond' => '#^/captcha(/?)$#',
-    'rule' => 'plugins/sedcaptcha/inc/sedcaptcha.php',
-  ),
-  5 => 
-  array (
-    'cond' => '#^/captcha\\.png$#',
-    'rule' => 'plugins/sedcaptcha/inc/sedcaptcha.php',
-  ),
-  6 => 
-  array (
     'cond' => '#^/robots.txt$#',
     'rule' => 'system/core/plug/plug.php?e=robots',
   ),
-  7 => 
+  5 => 
   array (
     'cond' => '#^/pfs/([0-9]+)(/?)$#',
     'rule' => 'modules/pfs/pfs.php?f=$1',
   ),
-  8 => 
+  6 => 
   array (
     'cond' => '#^/pfs(/?)$#',
     'rule' => 'modules/pfs/pfs.php',
   ),
-  9 => 
+  7 => 
   array (
     'cond' => '#^/view/([a-zA-Z0-9]+)(/?)$#',
     'rule' => 'system/core/plug/plug.php?e=view&v=$1',
   ),
-  10 => 
+  8 => 
   array (
     'cond' => '#^/rss/([a-zA-Z0-9]+)(/?)$#',
     'rule' => 'system/core/plug/plug.php?e=rss&m=$1',
   ),
-  11 => 
+  9 => 
   array (
     'cond' => '#^/rss(/?)$#',
     'rule' => 'system/core/plug/plug.php?e=rss',
   ),
-  12 => 
+  10 => 
   array (
     'cond' => '#^/sitemap_([a-zA-Z0-9]+)\\.xml$#',
     'rule' => 'system/core/plug/plug.php?e=sitemap&m=$1',
   ),
-  13 => 
+  11 => 
   array (
     'cond' => '#^/sitemap\\.xml$#',
     'rule' => 'system/core/plug/plug.php?e=sitemap',
   ),
-  14 => 
+  12 => 
   array (
     'cond' => '#^/polls/([a-zA-Z0-9]+)(/?)$#',
     'rule' => 'modules/polls/polls.php?id=$1',
   ),
-  15 => 
+  13 => 
   array (
     'cond' => '#^/polls(/?)$#',
     'rule' => 'modules/polls/polls.php',
   ),
-  16 => 
+  14 => 
   array (
     'cond' => '#^/gallery/pic/([0-9]+)(/?)$#',
     'rule' => 'modules/gallery/gallery.php?id=$1',
   ),
-  17 => 
+  15 => 
   array (
     'cond' => '#^/gallery/([0-9]+)(/?)$#',
     'rule' => 'modules/gallery/gallery.php?f=$1',
   ),
-  18 => 
+  16 => 
   array (
     'cond' => '#^/gallery(/?)$#',
     'rule' => 'modules/gallery/gallery.php',
   ),
-  19 => 
+  17 => 
   array (
     'cond' => '#^/pm/mess/([0-9]+)(/?)$#',
     'rule' => 'modules/pm/pm.php?id=$1',
   ),
-  20 => 
+  18 => 
   array (
     'cond' => '#^/pm/action/([a-zA-Z0-9]+)(/?)$#',
     'rule' => 'modules/pm/pm.php?m=$1',
   ),
-  21 => 
+  19 => 
   array (
     'cond' => '#^/pm/([a-zA-Z0-9]+)(/?)$#',
     'rule' => 'modules/pm/pm.php?f=$1',
   ),
-  22 => 
+  20 => 
   array (
     'cond' => '#^/pm(/?)$#',
     'rule' => 'modules/pm/pm.php',
   ),
-  23 => 
+  21 => 
   array (
     'cond' => '#^/forums/topics/([0-9]+)-([a-zA-Z0-9_-]+)(/?)$#',
     'rule' => 'modules/forums/forums.php?m=topics&s=$1&al=$2',
   ),
-  24 => 
+  22 => 
   array (
     'cond' => '#^/forums/topics/([0-9]+)(/?)$#',
     'rule' => 'modules/forums/forums.php?m=topics&s=$1',
   ),
-  25 => 
+  23 => 
   array (
     'cond' => '#^/forums/posts/([0-9]+)-([a-zA-Z0-9_-]+)(/?)$#',
     'rule' => 'modules/forums/forums.php?m=posts&q=$1&al=$2',
   ),
-  26 => 
+  24 => 
   array (
     'cond' => '#^/forums/posts/([0-9]+)(/?)$#',
     'rule' => 'modules/forums/forums.php?m=posts&q=$1',
   ),
-  27 => 
+  25 => 
   array (
     'cond' => '#^/forums/post/([0-9]+)-([a-zA-Z0-9_-]+)(/?)$#',
     'rule' => 'modules/forums/forums.php?m=posts&p=$1&al=$2',
   ),
-  28 => 
+  26 => 
   array (
     'cond' => '#^/forums/post/([0-9]+)(/?)$#',
     'rule' => 'modules/forums/forums.php?m=posts&p=$1',
   ),
-  29 => 
+  27 => 
   array (
     'cond' => '#^/forums/([a-zA-Z0-9]+)-([a-zA-Z0-9_-]+)(/?)$#',
     'rule' => 'modules/forums/forums.php?c=$1&al=$2',
   ),
-  30 => 
+  28 => 
   array (
     'cond' => '#^/forums/([a-zA-Z0-9]+)(/?)$#',
     'rule' => 'modules/forums/forums.php?c=$1',
   ),
-  31 => 
+  29 => 
   array (
     'cond' => '#^/forums(/?)$#',
     'rule' => 'modules/forums/forums.php',
   ),
-  32 => 
+  30 => 
   array (
     'cond' => '#^/contact(/?)$#',
     'rule' => 'system/core/plug/plug.php?e=contact',
   ),
-  33 => 
+  31 => 
   array (
     'cond' => '#^/tags(/?)$#',
     'rule' => 'system/core/plug/plug.php?e=tags',
   ),
-  34 => 
+  32 => 
   array (
     'cond' => '#^/whosonline(/?)$#',
     'rule' => 'system/core/plug/plug.php?e=whosonline',
   ),
-  35 => 
+  33 => 
   array (
     'cond' => '#^/passrecover(/?)$#',
     'rule' => 'system/core/plug/plug.php?e=passrecover',
   ),
-  36 => 
+  34 => 
   array (
     'cond' => '#^/plug/([a-zA-Z0-9_-]+)(/?)$#',
     'rule' => 'system/core/plug/plug.php?e=$1',
   ),
-  37 => 
+  35 => 
   array (
     'cond' => '#^/plug(/?)$#',
     'rule' => 'system/core/plug/plug.php',
   ),
-  38 => 
+  36 => 
   array (
     'cond' => '#^/admin/([a-zA-Z0-9_-]+)(/?)$#',
     'rule' => 'system/core/admin/admin.php?m=$1',
   ),
-  39 => 
+  37 => 
   array (
     'cond' => '#^/admin(/?)$#',
     'rule' => 'system/core/admin/admin.php',
   ),
-  40 => 
+  38 => 
   array (
     'cond' => '#^/users/filter/([a-zA-Z0-9_-]+)/sort/([a-zA-Z]+)-(asc|desc)(/?)$#',
     'rule' => 'modules/users/users.php?f=$1&s=$2&w=$3',
   ),
-  41 => 
+  39 => 
   array (
     'cond' => '#^/users/filter/([a-zA-Z0-9_-]+)(/?)$#',
     'rule' => 'modules/users/users.php?f=$1',
   ),
-  42 => 
+  40 => 
   array (
     'cond' => '#^/users/group/([0-9]+)/sort/([a-zA-Z]+)-(asc|desc)(/?)$#',
     'rule' => 'modules/users/users.php?f=all&gm=$1&s=$2&w=$3',
   ),
-  43 => 
+  41 => 
   array (
     'cond' => '#^/users/group/([0-9]+)(/?)$#',
     'rule' => 'modules/users/users.php?gm=$1',
   ),
-  44 => 
+  42 => 
   array (
     'cond' => '#^/users/maingroup/([0-9]+)/sort/([a-zA-Z]+)-(asc|desc)(/?)$#',
     'rule' => 'modules/users/users.php?f=all&g=$1&s=$2&w=$3',
   ),
-  45 => 
+  43 => 
   array (
     'cond' => '#^/users/maingroup/([0-9]+)(/?)$#',
     'rule' => 'modules/users/users.php?g=$1',
   ),
-  46 => 
+  44 => 
   array (
     'cond' => '#^/users/([a-zA-Z]+)/([a-zA-Z]+)(/?)$#',
     'rule' => 'modules/users/users.php?m=$1&a=$2',
   ),
-  47 => 
+  45 => 
   array (
     'cond' => '#^/users/([a-zA-Z]+)/([0-9]+)(/?)$#',
     'rule' => 'modules/users/users.php?m=$1&id=$2',
   ),
-  48 => 
+  46 => 
   array (
     'cond' => '#^/users/([a-zA-Z]+)(/?)$#',
     'rule' => 'modules/users/users.php?m=$1',
   ),
-  49 => 
+  47 => 
   array (
     'cond' => '#^/users(/?)$#',
     'rule' => 'modules/users/users.php',
   ),
-  50 => 
+  48 => 
   array (
     'cond' => '#^/register(/?)$#',
     'rule' => 'modules/users/users.php?m=register',
   ),
-  51 => 
+  49 => 
   array (
     'cond' => '#^/login(/?)$#',
     'rule' => 'modules/users/users.php?m=auth',
   ),
-  52 => 
+  50 => 
   array (
     'cond' => '#^/message/([0-9]+)/([a-zA-Z0-9]+)(/?)$#',
     'rule' => 'system/core/message/message.php?msg=$1&redirect=$2',
   ),
-  53 => 
+  51 => 
   array (
     'cond' => '#^/message/([0-9]+)(/?)$#',
     'rule' => 'system/core/message/message.php?msg=$1',
   ),
-  54 => 
+  52 => 
   array (
     'cond' => '#^/([a-zA-Z0-9_\\-\\+/%]+)/([a-zA-Z0-9_\\-\\+/%]+)/sort/([a-zA-Z]+)-(asc|desc)(/?)$#',
     'rule' => 'modules/page/page.php?c=$2&s=$3&w=$4',
   ),
-  55 => 
+  53 => 
   array (
     'cond' => '#^/([a-zA-Z0-9_\\-\\+%]+)/sort/([a-zA-Z]+)-(asc|desc)(/?)$#',
     'rule' => 'modules/page/page.php?c=$1&s=$2&w=$3',
   ),
-  56 => 
+  54 => 
   array (
     'cond' => '#^/([a-zA-Z0-9_\\-\\+/%]+)/([a-zA-Z0-9_\\-\\+/%]+)/$#',
     'rule' => 'modules/page/page.php?c=$2',
   ),
-  57 => 
+  55 => 
   array (
     'cond' => '#^/([a-zA-Z0-9_\\-\\+%]+)/$#',
     'rule' => 'modules/page/page.php?c=$1',
   ),
-  58 => 
+  56 => 
   array (
     'cond' => '#^/page/([a-zA-Z]+)(/?)$#',
     'rule' => 'modules/page/page.php?m=$1',
   ),
-  59 => 
+  57 => 
   array (
     'cond' => '#^/([a-zA-Z0-9_\\-\\+/%]+)/([0-9]+)/download(/?)$#',
     'rule' => 'modules/page/page.php?id=$2&a=dl',
   ),
-  60 => 
+  58 => 
   array (
     'cond' => '#^/([a-zA-Z0-9_\\-\\+/%]+)/([a-zA-Z0-9_\\-\\+%]+)/download(/?)$#',
     'rule' => 'modules/page/page.php?al=$2&a=dl',
   ),
-  61 => 
+  59 => 
   array (
     'cond' => '#^/([a-zA-Z0-9_\\-\\+/%]+)/([0-9]+)/comments(/?)$#',
     'rule' => 'modules/page/page.php?id=$2&comments=1',
   ),
-  62 => 
+  60 => 
   array (
     'cond' => '#^/([a-zA-Z0-9_\\-\\+/%]+)/([a-zA-Z0-9_\\-\\+%]+)/comments(/?)$#',
     'rule' => 'modules/page/page.php?al=$2&comments=1',
   ),
-  63 => 
+  61 => 
   array (
     'cond' => '#^/([a-zA-Z0-9_\\-\\+/%]+)/([0-9]+)$#',
     'rule' => 'modules/page/page.php?id=$2',
   ),
-  64 => 
+  62 => 
   array (
     'cond' => '#^/([a-zA-Z0-9_\\-\\+/%]+)/([a-zA-Z0-9_\\-\\+%]+)$#',
     'rule' => 'modules/page/page.php?al=$2',
   ),
-  65 => 
+  63 => 
   array (
     'cond' => '#^/([0-9]+)$#',
     'rule' => 'modules/page/page.php?id=$1',
   ),
-  66 => 
+  64 => 
   array (
     'cond' => '#^/([a-zA-Z0-9_\\-\\+%]+)$#',
     'rule' => 'modules/page/page.php?al=$1',
   ),
-  67 => 
+  65 => 
   array (
     'cond' => '#^/$#',
     'rule' => 'system/core/index/index.php',
@@ -721,14 +711,6 @@ $sed_urltrans = array (
     array (
       'params' => '',
       'rewrite' => 'gallery',
-    ),
-  ),
-  'captcha' => 
-  array (
-    0 => 
-    array (
-      'params' => '',
-      'rewrite' => 'captcha.png',
     ),
   ),
 );

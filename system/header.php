@@ -7,8 +7,8 @@ https://seditio.org
 
 [BEGIN_SED]
 File=system/header.php
-Version=185
-Updated=2026-feb-14
+Version=186
+Updated=2026-jul-17
 Type=Core
 Author=Seditio Team
 Description=Global header
@@ -19,7 +19,7 @@ if (!defined('SED_CODE')) {
 	die('Wrong URL.');
 }
 
-sed_add_javascript('system/javascript/core.js', true, 10);
+sed_add_javascript('system/assets/js/core.js', true, 10);
 
 /* === Hook === */
 $extp = sed_getextplugins('header.first');

@@ -7,7 +7,8 @@ https://seditio.org
 
 [BEGIN_SED]
 File=plugins/search/inc/search.functions.php
-Version=185
+Version=186
+Updated=2026-jun-23
 Type=Plugin
 Description=Search snippet helpers
 [END_SED]

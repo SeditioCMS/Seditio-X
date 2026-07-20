@@ -7,7 +7,8 @@ https://seditio.org
 
 [BEGIN_SED]
 File=plugins/comments/comments.common.php
-Version=185
+Version=186
+Updated=2026-feb-26
 Type=Plugin
 [END_SED]
 

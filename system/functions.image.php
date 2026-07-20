@@ -7,8 +7,8 @@ https://seditio.org
 
 [BEGIN_SED]
 File=system/functions.image.php
-Version=185
-Updated=2026-feb-14
+Version=186
+Updated=2026-jul-17
 Type=Core
 Author=Amro
 Description=Image Functions
@@ -1266,8 +1266,8 @@ function sed_image_upload_register_assets()
 		return;
 	}
 	$done = true;
-	sed_add_javascript('system/javascript/imageupload.js', true, 15);
-	sed_add_css('system/adminskin/sympfy/css/imageupload.css', true, 15);
+	sed_add_javascript('system/assets/js/imageupload.js', true, 15);
+	sed_add_css('system/assets/css/imageupload.css', true, 15);
 }
 
 /**

@@ -7,7 +7,8 @@ https://seditio.org
 
 [BEGIN_SED]
 File=plugins/i18n/lang/i18n.tr.lang.php
-Version=185
+Version=186
+Updated=2026-jul-09
 Type=Plugin
 [END_SED]
 ==================== */

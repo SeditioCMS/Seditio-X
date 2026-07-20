@@ -7,8 +7,8 @@ https://seditio.org
 
 [BEGIN_SED]
 File=system/core/admin/admin.header.php
-Version=185
-Updated=2026-feb-14
+Version=186
+Updated=2026-jul-17
 Type=Core
 Author=Seditio Team
 Description=Admin header
@@ -19,7 +19,7 @@ if (!defined('SED_CODE')) {
 	die('Wrong URL.');
 }
 
-sed_add_javascript('system/javascript/core.js', true, 10);
+sed_add_javascript('system/assets/js/core.js', true, 10);
 
 /* === Hook === */
 $extp = sed_getextplugins('header.first');
@@ -217,7 +217,8 @@ if ($usr['id'] > 0) {
 					'pl_title'  => isset($pl['pl_title']) ? $pl['pl_title'] : $plug_code,
 					'sections'  => isset($menu_def['sections']) && is_array($menu_def['sections']) ? $menu_def['sections'] : array(),
 					'adminlink' => isset($menu_def['adminlink']) ? $menu_def['adminlink'] : '',
-					'auth'      => (isset($menu_def['auth']) && is_array($menu_def['auth'])) ? $menu_def['auth'] : null
+					'auth'      => (isset($menu_def['auth']) && is_array($menu_def['auth'])) ? $menu_def['auth'] : null,
+					'icon'      => isset($menu_def['icon']) ? $menu_def['icon'] : ''
 				);
 			}
 		}
@@ -241,6 +242,7 @@ if ($usr['id'] > 0) {
 				"ADMIN_PLUGIN_MENU_URL" => $plug_menu_url,
 				"ADMIN_PLUGIN_MENU_TITLE" => sed_cc($plug_menu_title),
 				"ADMIN_PLUGIN_MENU_MOD_CODE" => $plug_code,
+				"ADMIN_PLUGIN_MENU_ICON" => !empty($plug_item['icon']) ? $plug_item['icon'] : 'ic-plug ic-' . $plug_code,
 				"ADMIN_PLUGIN_MENU_URL_CLASS" => $is_current ? 'current' : '',
 				"ADMIN_PLUGIN_MENU_SUBMENU_CLASS" => $has_submenu ? 'yes-submenu' : 'no-submenu'
 			));
@@ -304,7 +306,8 @@ if ($usr['id'] > 0) {
 				'title'   => $menu_def['title'],
 				'order'   => isset($menu_def['order']) ? (int)$menu_def['order'] : 50,
 				'ct_title' => $mod_menu_row['ct_title'],
-				'sections' => isset($menu_def['sections']) && is_array($menu_def['sections']) ? $menu_def['sections'] : array()
+				'sections' => isset($menu_def['sections']) && is_array($menu_def['sections']) ? $menu_def['sections'] : array(),
+				'icon'     => isset($menu_def['icon']) ? $menu_def['icon'] : ''
 			);
 		}
 		usort($mod_menu_items, function ($a, $b) {
@@ -324,6 +327,7 @@ if ($usr['id'] > 0) {
 				"ADMIN_MODULE_MENU_URL" => $mod_menu_url,
 				"ADMIN_MODULE_MENU_TITLE" => sed_cc($mod_menu_title),
 				"ADMIN_MODULE_MENU_MOD_CODE" => $mod_code,
+				"ADMIN_MODULE_MENU_ICON" => !empty($mod_item['icon']) ? $mod_item['icon'] : 'ic-' . $mod_code,
 				"ADMIN_MODULE_MENU_URL_CLASS" => $is_current ? 'current' : '',
 				"ADMIN_MODULE_MENU_SUBMENU_CLASS" => $has_submenu ? 'yes-submenu' : 'no-submenu'
 			));

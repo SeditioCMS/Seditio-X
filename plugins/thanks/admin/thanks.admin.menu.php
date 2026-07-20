@@ -7,7 +7,8 @@ https://seditio.org
 
 [BEGIN_SED]
 File=plugins/thanks/admin/thanks.admin.menu.php
-Version=185
+Version=186
+Updated=2026-mar-12
 Type=Plugin
 Description=Thanks admin menu definition
 [END_SED]
