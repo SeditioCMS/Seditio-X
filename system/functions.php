@@ -8,7 +8,7 @@ https://seditio.org
 [BEGIN_SED]
 File=system/functions.php
 Version=186
-Updated=2026-jul-29
+Updated=2026-aug-11
 Type=Core
 Author=Seditio Team
 Description=Functions
@@ -1378,7 +1378,9 @@ function sed_cc($text, $ent_quotes = null, $bbmode = FALSE)
 function sed_check_csrf()
 {
 	$csrf = isset($_SERVER['HTTP_X_SEDITIO_CSRF']) ? $_SERVER['HTTP_X_SEDITIO_CSRF'] : '';
-	return $csrf === sed_sourcekey();
+	$sk = sed_sourcekey();
+	$sk_prev = sed_sourcekey_prev();
+	return ($csrf === $sk || (!empty($sk_prev) && $csrf === $sk_prev));
 }
 
 /** 
@@ -1390,7 +1392,10 @@ function sed_check_xg()
 {
 	global $xg, $cfg;
 
-	if ($xg != sed_sourcekey()) {
+	$sk = sed_sourcekey();
+	$sk_prev = sed_sourcekey_prev();
+
+	if ($xg != $sk && (empty($sk_prev) || $xg != $sk_prev)) {
 		sed_diefatal('Wrong parameter in the URL.');
 	}
 	return (TRUE);
@@ -1406,13 +1411,14 @@ function sed_check_xp()
 	global $xp;
 
 	$sk = sed_sourcekey();
+	$sk_prev = sed_sourcekey_prev();
 
 	if ($_SERVER['REQUEST_METHOD'] == 'POST' && isset($_SERVER['HTTP_X_SEDITIO_CSRF'])) {
 		if (!sed_check_csrf()) {
 			sed_diefatal('Invalid CSRF token for AJAX POST request.');
 		}
 	} elseif ($_SERVER['REQUEST_METHOD'] == 'POST' && !defined('SED_AUTH') && !defined('SED_DISABLE_XFORM')) {
-		if (empty($xp) || $xp != $sk) {
+		if (empty($xp) || ($xp != $sk && (empty($sk_prev) || $xp != $sk_prev))) {
 			sed_diefatal('Wrong parameter in the URL.');
 		}
 	}
@@ -2000,7 +2006,6 @@ function sed_die_message($code, $message_title = '', $message_body = '', $redire
 	global $L, $cfg, $sys, $usr, $lang;
 
 	$mskin = sed_skinfile(array($code, 'message')) ? sed_skinfile(array($code, 'message')) : sed_skinfile('service.message');
-	require(SED_ROOT . "/system/lang/$lang/message.lang.php");
 
 	if (array_key_exists($code, $cfg['msg_status'])) {
 		sed_sendheaders('text/html', $cfg['msg_status'][$code]);
@@ -4943,6 +4948,16 @@ function sed_sourcekey()
 	$sourcekey = mb_strtoupper(mb_substr($usr['sourcekey'], 0, 6));
 	$result = ($usr['id'] > 0) ? $sourcekey : 'GUEST_' . $sourcekey;
 	return ($result);
+}
+
+/** 
+ * Gets previous XSS protection code 
+ * 
+ * @return string 
+ */
+function sed_sourcekey_prev()
+{
+	return isset($_SESSION['sed_sourcekey_prev']) ? $_SESSION['sed_sourcekey_prev'] : '';
 }
 
 /** 

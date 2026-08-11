@@ -8,7 +8,7 @@ https://seditio.org
 [BEGIN_SED]
 File=system/common.php
 Version=186
-Updated=2026-jul-28
+Updated=2026-aug-11
 Type=Core
 Author=Seditio Team
 Description=Common
@@ -246,7 +246,9 @@ if (isset($rsedition) && $rsedition > 0 && $cfg['authmode'] > 0) {
 
 			if ($usr['lastlog'] + $cfg['timedout'] < $sys['now_offset']) {
 				$sys['comingback'] = TRUE;
+				$_SESSION['sed_sourcekey_prev'] = sed_sourcekey();
 				$usr['lastvisit'] = $usr['lastlog'];
+				$usr['sourcekey'] = md5($row['user_secret'] . $usr['lastvisit']);
 				$sys['sql_update_lastvisit'] = ", user_lastvisit='" . $usr['lastvisit'] . "'";
 			}
 
@@ -439,6 +441,11 @@ foreach ($sed_modules as $mod_code => $mod_row) {
 	if ($mod_lang_file = sed_langfile($mod_code, 'module', $lang)) {
 		include_once($mod_lang_file);
 	}
+}
+
+$msg_lang_file = SED_ROOT . '/system/lang/' . $usr['lang'] . '/message.lang.php';
+if (file_exists($msg_lang_file)) {
+	include_once($msg_lang_file);
 }
 
 $yesno_arr = array(1 => $L['Yes'], 0 => $L['No']);
