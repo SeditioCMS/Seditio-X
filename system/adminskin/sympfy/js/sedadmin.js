@@ -78,7 +78,7 @@ const sedadminjs = (() => {
     const isElementHidden = (element) => {
         if (!element) return true;
         if (element.style.display === 'none') return true;
-        if (element.style.display === 'block') return false;
+        if (element.style.display && element.style.display !== 'none') return false;
         return window.getComputedStyle(element).display === 'none';
     };
 
@@ -102,13 +102,19 @@ const sedadminjs = (() => {
      * @param {number} duration - Animation duration in milliseconds
      */
     const slideDown = (element, duration = 250) => {
-        element.style.display = 'block';
+        element.style.removeProperty('display');
+        let display = window.getComputedStyle(element).display;
+        if (display === 'none') {
+            display = 'block';
+        }
+        element.style.display = display;
         const height = element.offsetHeight;
         element.style.height = '0px';
         element.style.overflow = 'hidden';
         animate(element, { height: `${height}px` }, duration, () => {
             element.style.height = '';
             element.style.overflow = '';
+            element.style.removeProperty('display');
         });
     };
 
@@ -510,10 +516,12 @@ const sedadminjs = (() => {
                 if (!contentBox) return;
 
                 const content = contentBox.querySelector('.content-box-content-tabs, .content-box-content, .content-card-content, .card-body');
-                const tabs = contentBox.querySelector('.content-box-tabs');
+                const headerElements = contentBox.querySelectorAll('.content-box-tabs, .card-tabs, .content-box-header-right, .card-header-right');
 
                 if (content) slideToggle(content, 250);
-                if (tabs) slideToggle(tabs, 250);
+                for (const el of headerElements) {
+                    slideToggle(el, 250);
+                }
 
                 sedjs.toggleClass(contentBox, 'closed-box');
 
@@ -530,9 +538,11 @@ const sedadminjs = (() => {
         const closedBoxes = document.querySelectorAll('.closed-box');
         for (const closedBox of closedBoxes) {
             const content = closedBox.querySelector('.content-box-content-tabs, .content-box-content, .content-card-content, .card-body');
-            const tabs = closedBox.querySelector('.content-box-tabs');
+            const headerElements = closedBox.querySelectorAll('.content-box-tabs, .card-tabs, .content-box-header-right, .card-header-right');
             if (content) content.style.display = 'none';
-            if (tabs) tabs.style.display = 'none';
+            for (const el of headerElements) {
+                el.style.display = 'none';
+            }
         }
 
         const tableRows = document.querySelectorAll('tbody tr');
@@ -554,7 +564,7 @@ const sedadminjs = (() => {
             });
         }
 
-        const tabLinks = document.querySelectorAll('.content-box-tabs a');
+        const tabLinks = document.querySelectorAll('.content-box-tabs a, .card-tabs a');
         for (const tabLink of tabLinks) {
             tabLink.addEventListener('click', function(e) {
                 e.preventDefault();
@@ -565,9 +575,12 @@ const sedadminjs = (() => {
                 }
                 sedjs.addClass(this, 'selected');
 
-                const contentBox = this.closest('.content-box');
+                const contentBox = this.closest('.content-box, .content-card, .dashboard-card, .card');
+                if (!contentBox) return;
                 const contentContainer = contentBox.querySelector('.content-box-content-tabs') ||
-                    contentBox.querySelector('.content-box-content');
+                    contentBox.querySelector('.content-box-content') ||
+                    contentBox.querySelector('.content-card-content') ||
+                    contentBox.querySelector('.card-body');
                 if (contentContainer) {
                     const tabContents = contentContainer.querySelectorAll('.tab-content');
                     for (const tabContent of tabContents) {
