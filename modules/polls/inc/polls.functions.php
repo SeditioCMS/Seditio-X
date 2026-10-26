@@ -8,7 +8,7 @@ https://seditio.org
 [BEGIN_SED]
 File=modules/polls/inc/polls.functions.php
 Version=186
-Updated=2026-sep-21
+Updated=2026-oct-23
 Type=Module
 Author=Seditio Team
 Description=Polls functions
@@ -156,18 +156,29 @@ function sed_poll_editsave($poll_id)
 	$poll_text = sed_import('poll_text', 'P', 'TXT');
 	$poll_option_arr = sed_import('poll_option', 'P', 'ARR');
 
-	foreach ($poll_option_arr as $key => $v) {
-		if (!empty($v)) {
-			$poll_options[$key] = sed_import($v, 'D', 'TXT');
-			$poll_options_keys[] = $key; //exists's variants
+	$poll_options = array();
+	$poll_options_keys = array();
+
+	if (is_array($poll_option_arr)) {
+		foreach ($poll_option_arr as $key => $v) {
+			if (!empty($v)) {
+				$key = (int)$key;
+				$poll_options[$key] = sed_import($v, 'D', 'TXT');
+				$poll_options_keys[] = $key; //exists's variants
+			}
 		}
 	}
 
 	$sql = sed_sql_query("UPDATE $db_polls SET poll_text='" . sed_sql_prep($poll_text) . "' WHERE poll_id='" . (int)$poll_id . "'");
-	$sql2 = sed_sql_query("DELETE FROM $db_polls_options WHERE po_pollid='" . (int)$poll_id . "' AND po_id NOT IN (" . implode(',', $poll_options_keys) . ")");
+
+	if (!empty($poll_options_keys)) {
+		$sql2 = sed_sql_query("DELETE FROM $db_polls_options WHERE po_pollid='" . (int)$poll_id . "' AND po_id NOT IN (" . implode(',', $poll_options_keys) . ")");
+	} else {
+		$sql2 = sed_sql_query("DELETE FROM $db_polls_options WHERE po_pollid='" . (int)$poll_id . "'");
+	}
 
 	foreach ($poll_options as $key => $npo) {
-		$sql3 = sed_sql_query("INSERT INTO $db_polls_options SET po_id='" . $key . "', po_pollid='" . $poll_id . "', po_text = '" . sed_sql_prep($npo) . "', po_count = 0 
+		$sql3 = sed_sql_query("INSERT INTO $db_polls_options SET po_id='" . (int)$key . "', po_pollid='" . (int)$poll_id . "', po_text = '" . sed_sql_prep($npo) . "', po_count = 0 
 							ON DUPLICATE KEY UPDATE po_text = '" . sed_sql_prep($npo) . "'");
 	}
 }
@@ -255,9 +266,9 @@ function sed_poll_vote($id, $vote)
 
 	if ($id > 0) {
 		if ($usr['id'] > 0) {
-			$sql = sed_sql_query("SELECT pv_id FROM $db_polls_voters WHERE pv_pollid='$id' AND (pv_userid='" . $usr['id'] . "' OR pv_userip='" . $usr['ip'] . "') LIMIT 1");
+			$sql = sed_sql_query("SELECT pv_id FROM $db_polls_voters WHERE pv_pollid='$id' AND (pv_userid='" . (int)$usr['id'] . "' OR pv_userip='" . sed_sql_prep($usr['ip']) . "') LIMIT 1");
 		} else {
-			$sql = sed_sql_query("SELECT pv_id FROM $db_polls_voters WHERE pv_pollid='$id' AND pv_userip='" . $usr['ip'] . "' LIMIT 1");
+			$sql = sed_sql_query("SELECT pv_id FROM $db_polls_voters WHERE pv_pollid='$id' AND pv_userip='" . sed_sql_prep($usr['ip']) . "' LIMIT 1");
 		}
 
 		$alreadyvoted = (sed_sql_numrows($sql) > 0) ? TRUE : FALSE;
@@ -265,7 +276,7 @@ function sed_poll_vote($id, $vote)
 		if (sed_sql_numrows($sql) == 0 && $vote > 0) {
 			$sql2 = sed_sql_query("UPDATE $db_polls_options SET po_count=po_count+1 WHERE po_pollid='$id' AND po_id='$vote'");
 			if (sed_sql_affectedrows() == 1) {
-				$sql2 = sed_sql_query("INSERT INTO $db_polls_voters (pv_pollid, pv_userid, pv_userip) VALUES (" . (int)$id . ", " . (int)$usr['id'] . ", '" . $usr['ip'] . "')");
+				$sql2 = sed_sql_query("INSERT INTO $db_polls_voters (pv_pollid, pv_userid, pv_userip) VALUES (" . (int)$id . ", " . (int)$usr['id'] . ", '" . sed_sql_prep($usr['ip']) . "')");
 				$votecasted = TRUE;
 				$alreadyvoted = TRUE;
 			}

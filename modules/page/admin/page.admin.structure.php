@@ -8,7 +8,7 @@ https://seditio.org
 [BEGIN_SED]
 File=modules/page/admin/page.admin.structure.php
 Version=186
-Updated=2026-oct-09
+Updated=2026-oct-23
 Type=Module.admin
 Author=Seditio Team
 Description=Page structure and queue
@@ -52,9 +52,10 @@ switch ($mn) {
 
 		if ($n == 'options') {
 			if ($a == 'update') {
+				sed_check_xg();
 
 				if (sed_plug_active('revisions') && !empty($id)) {
-					$sql_curr = sed_sql_query("SELECT * FROM $db_structure WHERE structure_id = '$id' LIMIT 1");
+					$sql_curr = sed_sql_query("SELECT * FROM $db_structure WHERE structure_id = '" . (int)$id . "' LIMIT 1");
 					if ($current_cat = sed_sql_fetchassoc($sql_curr)) {
 						sed_revision_add('structure', (string)$current_cat['structure_id'], $current_cat['structure_title'], $current_cat, $L['rev_auto_edit_comment']);
 					}
@@ -110,8 +111,8 @@ switch ($mn) {
 				structure_seo_follow = '" . sed_sql_prep($rseofollow) . "',
     			structure_allowcomments = '" . sed_sql_prep($rallowcomments) . "',
     			structure_allowratings = '" . sed_sql_prep($rallowratings) . "',
-    			structure_group = '" . $rgroup . "'
-    			WHERE structure_id = '" . $id . "'");
+    			structure_group = '" . (int)$rgroup . "'
+    			WHERE structure_id = '" . (int)$id . "'");
 
 				sed_cache_clear('sed_cat');
 				sed_page_clear_menu_cache();
@@ -119,7 +120,7 @@ switch ($mn) {
 				exit;
 			}
 
-			$sql = sed_sql_query("SELECT * FROM $db_structure WHERE structure_id='$id' LIMIT 1");
+			$sql = sed_sql_query("SELECT * FROM $db_structure WHERE structure_id='" . (int)$id . "' LIMIT 1");
 			sed_die(sed_sql_numrows($sql) == 0);
 
 			$handle = opendir("skins/" . $cfg['defaultskin'] . "/");
@@ -189,7 +190,7 @@ switch ($mn) {
 			$pfs .= (sed_auth('pfs', 'a', 'A')) ? " &nbsp; " . sed_build_pfs(0, 'savestructure', 'rstext', $L['SFS']) : '';
 
 			$t->assign(array(
-				"STRUCTURE_UPDATE_SEND" => sed_url("admin", "m=page&mn=structure&n=options&a=update&id=" . $structure_id),
+				"STRUCTURE_UPDATE_SEND" => sed_url("admin", "m=page&mn=structure&n=options&a=update&id=" . $structure_id . "&" . sed_xg()),
 				"STRUCTURE_UPDATE_CODE" => $structure_code,
 				"STRUCTURE_UPDATE_PATH" => sed_textbox('rpath', $structure_path, 16, 16),
 				"STRUCTURE_UPDATE_TITLE" => sed_textbox('rtitle', $structure_title, 48, 64),
@@ -223,13 +224,14 @@ switch ($mn) {
 			$t->parse("ADMIN_PAGE.STRUCTURE_UPDATE");
 		} else {
 			if ($a == 'update') {
+				sed_check_xg();
 				$s = sed_import('s', 'P', 'ARR');
 
 				foreach ($s as $i => $k) {
 					$sql1 = sed_sql_query("UPDATE $db_structure SET
     				structure_path='" . sed_sql_prep($s[$i]['rpath']) . "',
-    				structure_group='" . $s[$i]['rgroup'] . "'
-    				WHERE structure_id='" . $i . "'");
+    				structure_group='" . (int)$s[$i]['rgroup'] . "'
+    				WHERE structure_id='" . (int)$i . "'");
 				}
 				sed_auth_clear('all');
 				sed_cache_clear('sed_cat');
@@ -355,7 +357,7 @@ switch ($mn) {
 			}
 
 			$t->assign(array(
-				"PAGE_STRUCTURE_SEND" => sed_url("admin", "m=page&mn=structure&a=update"),
+				"PAGE_STRUCTURE_SEND" => sed_url("admin", "m=page&mn=structure&a=update&" . sed_xg()),
 				"PAGE_STRUCTURE_ADD_SEND" => sed_url("admin", "m=page&mn=structure&a=add&" . sed_xg()),
 				"PAGE_STRUCTURE_ADD_CODE" => sed_textbox('ncode', isset($ncode) ? $ncode : '', 48, 255),
 				"PAGE_STRUCTURE_ADD_PATH" => sed_textbox('npath', isset($npath) ? $npath : '', 16, 16),
@@ -409,8 +411,10 @@ switch ($mn) {
 			$s = sed_import('s', 'P', 'ARR');
 
 			foreach ($s as $i => $k) {
-				$order = $s[$i]['order'] . '.' . $s[$i]['way'];
-				$sql = sed_sql_query("UPDATE $db_structure SET structure_order='$order' WHERE structure_id='$i'");
+				$order_col = (isset($s[$i]['order']) && array_key_exists($s[$i]['order'], $options_sort)) ? $s[$i]['order'] : 'date';
+				$order_way = (isset($s[$i]['way']) && array_key_exists($s[$i]['way'], $options_way)) ? $s[$i]['way'] : 'desc';
+				$order = $order_col . '.' . $order_way;
+				$sql = sed_sql_query("UPDATE $db_structure SET structure_order='$order' WHERE structure_id='" . (int)$i . "'");
 			}
 			sed_cache_clear('sed_cat');
 			sed_page_clear_menu_cache();

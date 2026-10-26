@@ -16,6 +16,8 @@ local.properties
 .settings/
 .loadpath
 .vscode
+.vibe
+.
 
 # External tool builders
 .externalToolBuilders/
@@ -244,3 +246,7 @@ skins/sympfytest/
 modules/shop/*
 plugins/tableofcontents/*
 plugins/forumsubscribe/*
+plugins/anketa/*
+docs/news_*
+datas/cache/sed_urls.php
+.editorconfig

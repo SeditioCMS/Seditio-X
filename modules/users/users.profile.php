@@ -8,7 +8,7 @@ https://seditio.org
 [BEGIN_SED]
 File=modules/users/users.profile.php
 Version=186
-Updated=2026-oct-09
+Updated=2026-oct-23
 Type=Module
 Author=Seditio Team
 Description=User profile
@@ -92,7 +92,7 @@ switch ($a) {
 		/* ============= */
 
 		sed_check_xg();
-		$avatar = $cfg['defav_dir'] . urldecode($id);
+		$avatar = $cfg['defav_dir'] . basename(urldecode($id));
 		$avatar = str_replace(array("'", ",", chr(0x00)), "", $avatar);
 		if (file_exists($avatar)) {
 			$sql = sed_sql_query("UPDATE $db_users SET user_avatar='" . sed_sql_prep($avatar) . "' WHERE user_id='" . $usr['id'] . "'");
@@ -128,6 +128,7 @@ switch ($a) {
 		$ruserskin = sed_import('ruserskin', 'P', 'TXT');
 		$ruserlang = sed_import('ruserlang', 'P', 'ALP');
 		$ruserwebsite = sed_import('ruserwebsite', 'P', 'TXT');
+		$ruserwebsite = (!empty($ruserwebsite)) ? sed_addhttp($ruserwebsite) : '';
 		$ruserskype = sed_import('ruserskype', 'P', 'TXT');
 		$rusergender = sed_import('rusergender', 'P', 'ALP');
 		$ryear = sed_import('ryear', 'P', 'INT');

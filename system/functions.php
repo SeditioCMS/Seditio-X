@@ -8,7 +8,7 @@ https://seditio.org
 [BEGIN_SED]
 File=system/functions.php
 Version=186
-Updated=2026-oct-15
+Updated=2026-oct-23
 Type=Core
 Author=Seditio Team
 Description=Functions
@@ -294,10 +294,31 @@ foreach ($sed_dbnames as $k => $i) {
  */
 function sed_addhttp($url, $scheme = "http://")
 {
-	if (!preg_match("~^(?:f|ht)tps?://~i", $url)) {
-		$url = empty(parse_url($url)['scheme']) ? $scheme . ltrim($url, '/') : $url;
+	$url = trim((string)$url);
+	if (empty($url)) {
+		return '';
 	}
-	return $url;
+
+	// Reject dangerous schemes
+	if (preg_match('/^(javascript|vbscript|data|file):/i', $url)) {
+		return '';
+	}
+
+	if (preg_match('~^(?:f|ht)tps?://~i', $url)) {
+		return $url;
+	}
+
+	if (strpos($url, '//') === 0) {
+		return 'http:' . $url;
+	}
+
+	$parsed = @parse_url($url);
+	if (!empty($parsed['scheme'])) {
+		// Contains an unsupported or invalid scheme
+		return '';
+	}
+
+	return $scheme . ltrim($url, '/');
 }
 
 /** 
@@ -331,7 +352,10 @@ function sed_alert($alert, $type = 'i', $close = TRUE)
  */
 function sed_alphaonly($text)
 {
-	return (preg_replace('/[^a-zA-Z0-9_]/', '', $text));
+	if ($text === null || $text === '') {
+		return '';
+	}
+	return (preg_replace('/[^a-zA-Z0-9_]/', '', (string)$text));
 }
 
 /**
@@ -342,7 +366,10 @@ function sed_alphaonly($text)
  */
 function sed_onlydigits($text)
 {
-	return (preg_replace('/[^0-9+]/', '', $text));
+	if ($text === null || $text === '') {
+		return '';
+	}
+	return (preg_replace('/[^0-9+]/', '', (string)$text));
 }
 
 /**
@@ -411,48 +438,17 @@ function sed_attr($attrs)
 {
 	$attributes = '';
 
-	// List of JavaScript event attributes that should not be escaped
-	$no_escape_attrs = [
-		'onclick',
-		'ondblclick',
-		'onmouseover',
-		'onmouseout',
-		'onmousemove',
-		'onmousedown',
-		'onmouseup',
-		'onkeydown',
-		'onkeypress',
-		'onkeyup',
-		'onchange',
-		'oninput',
-		'onsubmit',
-		'onfocus',
-		'onblur',
-		'onload',
-		'onunload',
-		'onerror',
-		'onresize',
-		'onscroll',
-		'oncontextmenu',
-		'onselect',
-		'ondrag',
-		'ondrop'
-	];
-
 	if (is_array($attrs)) {
 		foreach ($attrs as $key => $value) {
-			$key_lower = mb_strtolower($key);
-			$escapedKey = sed_cc($key);
-			if (in_array($key_lower, $no_escape_attrs)) {
-				$escapedValue = $value;
-			} else {
-				$escapedValue = sed_cc($value);
+			$escapedKey = preg_replace('/[^a-zA-Z0-9_\-:]/', '', (string)$key);
+			if ($escapedKey === '') {
+				continue;
 			}
-
-			$attributes .= " $escapedKey=\"$escapedValue\"";
+			$escapedValue = htmlspecialchars((string)$value, ENT_QUOTES, 'UTF-8');
+			$attributes .= " " . $escapedKey . "=\"" . $escapedValue . "\"";
 		}
 	} elseif (is_string($attrs) && !empty($attrs)) {
-		$attributes = " $attrs";
+		$attributes = " " . $attrs;
 	}
 
 	return $attributes;
@@ -1132,13 +1128,13 @@ function sed_build_url($text, $maxlen = 64)
 	global $cfg;
 
 	if (!empty($text)) {
-		$text = sed_cc($text);
-		$url = $text;
-		if (mb_stripos($url, 'http://') === FALSE) {
-			$url = 'http://' . $url;
+		$raw_text = trim((string)$text);
+		$url = sed_addhttp($raw_text);
+		if (empty($url)) {
+			return '';
 		}
 
-		$text = sed_link($url, sed_cutstring($text, $maxlen));
+		$text = sed_link($url, sed_cutstring(sed_cc($raw_text), $maxlen));
 	}
 	return ($text);
 }
@@ -1294,6 +1290,32 @@ function sed_tplcache_clear()
 	return true;
 }
 
+/**
+ * Safely unserializes data with protection against PHP Object Injection.
+ * Fully compatible with PHP 5.6 and PHP 7.0 - 8.x.
+ *
+ * @param string $data Serialized data
+ * @return mixed Unserialized data or false on failure
+ */
+function sed_unserialize($data)
+{
+	if (empty($data) || !is_string($data)) {
+		return false;
+	}
+
+	// For PHP 7.0+, use native allowed_classes option to prevent object instantiation
+	if (PHP_VERSION_ID >= 70000) {
+		return @unserialize($data, array('allowed_classes' => false));
+	}
+
+	// For PHP 5.6: reject payloads containing serialized object markers (O: or C:)
+	if (preg_match('/(^|;|{|})[OC]:\+?[0-9]+:"/', $data)) {
+		return false;
+	}
+
+	return @unserialize($data);
+}
+
 /** 
  * Fetches cache value 
  * 
@@ -1313,7 +1335,7 @@ function sed_cache_get($name, $expire = true)
 
 	$sql = sed_sql_query("SELECT c_value FROM $db_cache WHERE c_name='$name'" . $sql_exp);
 	if ($row = sed_sql_fetchassoc($sql)) {
-		return (unserialize($row['c_value']));
+		return (sed_unserialize($row['c_value']));
 	} else {
 		return (FALSE);
 	}
@@ -2306,46 +2328,83 @@ function sed_getcurrenturl()
 }
 
 /**
- * Retrieves the user's IP address from the server environment.
+ * Retrieves the user's IP address supporting both IPv4 and IPv6.
+ * Automatically detects trusted local/private reverse proxies (Nginx, Apache, Cloudflare)
+ * and prevents IP spoofing on direct client connections.
  *
- * This function checks various server headers to determine the user's IP address.
- * It is particularly useful when the site is behind a proxy server or load balancer,
- * as these headers may contain the original IP address of the client.
- *
- * The function supports both IPv4 and IPv6 addresses and validates the IP address
- * using PHP's filter_var function. If no valid IP address is found in the headers,
- * it returns '0.0.0.0'.
- *
- * @return string The user's IP address or '0.0.0.0' if not found.
+ * @return string Validated and escaped IPv4/IPv6 address or '0.0.0.0'
  */
 function sed_get_userip()
 {
-	// Headers that might contain the user's IP address
-	$headers = [
-		'HTTP_X_CLUSTER_CLIENT_IP',
-		'HTTP_X_FORWARDED_FOR',
-		'HTTP_X_FORWARDED',
-		'HTTP_FORWARDED_FOR',
-		'HTTP_FORWARDED',
-		'HTTP_X_REAL_IP',
-		'REMOTE_ADDR'
-	];
+	global $cfg;
 
-	foreach ($headers as $header) {
-		if (isset($_SERVER[$header])) {
-			// Split addresses if there are multiple (e.g., in the case of HTTP_X_FORWARDED_FOR)
-			$ipAddresses = explode(',', $_SERVER[$header]);
-			// Return the first address in the list
-			$ip = trim($ipAddresses[0]);
-			// Check if the address is a valid IPv4 or IPv6
-			if (filter_var($ip, FILTER_VALIDATE_IP, FILTER_FLAG_IPV4 | FILTER_FLAG_IPV6)) {
-				return $ip;
+	$remote = !empty($_SERVER['REMOTE_ADDR']) ? trim($_SERVER['REMOTE_ADDR']) : '';
+
+	// Clean IPv6 brackets or ports from REMOTE_ADDR if present
+	if (preg_match('/^\[?([a-fA-F0-9:.]+)\]?(?::\d+)?$/', $remote, $m)) {
+		$remote = $m[1];
+	}
+
+	$ip = '';
+
+	// Determine if connection comes from a local/private reverse proxy (Nginx, Docker, HAProxy)
+	$is_private_proxy = false;
+	if (!empty($remote)) {
+		if (filter_var($remote, FILTER_VALIDATE_IP, FILTER_FLAG_NO_PRIV_RANGE | FILTER_FLAG_NO_RES_RANGE) === false) {
+			$is_private_proxy = true;
+		} elseif (strpos($remote, ':') !== false) {
+			$lower = strtolower($remote);
+			if ($lower === '::1' || strpos($lower, 'fe80:') === 0 || strpos($lower, 'fc') === 0 || strpos($lower, 'fd') === 0) {
+				$is_private_proxy = true;
 			}
 		}
 	}
 
-	// If none of the headers contain a valid IP address, return '0.0.0.0'
-	return '0.0.0.0';
+	// Trust proxy headers if site is behind Cloudflare, behind a private proxy, or if explicitly enabled
+	$trust_headers = $is_private_proxy || !empty($cfg['trust_proxy']) || !empty($_SERVER['HTTP_CF_CONNECTING_IP']);
+
+	if ($trust_headers) {
+		$headers = array(
+			'HTTP_CF_CONNECTING_IP',
+			'HTTP_X_REAL_IP',
+			'HTTP_X_FORWARDED_FOR',
+			'HTTP_FORWARDED_FOR',
+			'HTTP_FORWARDED',
+			'HTTP_X_CLUSTER_CLIENT_IP',
+			'HTTP_CLIENT_IP'
+		);
+
+		foreach ($headers as $hdr) {
+			if (!empty($_SERVER[$hdr])) {
+				$addresses = explode(',', $_SERVER[$hdr]);
+				$candidate = trim($addresses[0]);
+
+				// Clean IPv6 brackets or ports if present
+				if (preg_match('/^\[?([a-fA-F0-9:.]+)\]?(?::\d+)?$/', $candidate, $m)) {
+					$candidate = $m[1];
+				}
+
+				if (filter_var($candidate, FILTER_VALIDATE_IP)) {
+					$ip = $candidate;
+					break;
+				}
+			}
+		}
+	}
+
+	// Fallback to direct REMOTE_ADDR
+	if (empty($ip) && !empty($remote) && filter_var($remote, FILTER_VALIDATE_IP)) {
+		$ip = $remote;
+	}
+
+	// Safe fallback if no valid IP detected
+	if (empty($ip)) {
+		$ip = '0.0.0.0';
+	}
+
+	// IPv6 max length is 45 chars (with IPv4 mapping), escape for SQL safety
+	$ip = substr($ip, 0, 45);
+	return sed_sql_prep($ip);
 }
 
 /**
@@ -2390,8 +2449,8 @@ function sed_htmlmetas($description = '', $keywords = '', $robots_index = 1, $ro
 {
 	global $cfg, $sys;
 
-	$description = (empty($description)) ? (string)$cfg['subtitle'] : htmlspecialchars((string)$description);
-	$keywords = (empty($keywords)) ? (string)$cfg['metakeywords'] : htmlspecialchars((string)$keywords);
+	$description = htmlspecialchars((empty($description)) ? (string)$cfg['subtitle'] : (string)$description, ENT_QUOTES, 'UTF-8');
+	$keywords = htmlspecialchars((empty($keywords)) ? (string)$cfg['metakeywords'] : (string)$keywords, ENT_QUOTES, 'UTF-8');
 
 	// Define robots directives
 	$robots_index = ($robots_index == 1) ? 'index' : 'noindex';
@@ -2642,11 +2701,21 @@ function sed_import($name, $source, $filter, $maxlen = 0, $dieonerror = false)
 
 		case 'HTM': // HTML with plugin filtering
 			$v = trim($v);
-			/* == Hook for plugins == */
-			foreach (sed_getextplugins('import.filter') as $pl) {
-				include $pl;
+			$extplugins = sed_getextplugins('import.filter');
+			if (!empty($extplugins)) {
+				/* == Hook for plugins == */
+				foreach ($extplugins as $pl) {
+					include $pl;
+				}
+				/* ===== */
+			} else {
+				// Basic fallback sanitization when no filtering plugin (e.g. jevix) is registered
+				$v = strip_tags($v, '<p><br><b><strong><i><em><u><a><ul><ol><li><blockquote><img><h1><h2><h3><h4><h5><h6><hr><table><tr><td><th><tbody><thead><tfoot>');
+				$v = preg_replace('#\s*on[a-z]+\s*=\s*(["\']).*?\1#is', '', $v);
+				$v = preg_replace('#\s*on[a-z]+\s*=\s*[^>\s]+#is', '', $v);
+				$v = preg_replace('#\s*(href|src)\s*=\s*(["\'])\s*(javascript|vbscript|data):.*?\2#is', '', $v);
+				$v = preg_replace('#\s*(href|src)\s*=\s*(javascript|vbscript|data):[^>\s]+#is', '', $v);
 			}
-			/* ===== */
 			$pass = true;
 			break;
 
@@ -3425,7 +3494,7 @@ function sed_log($text, $group = 'def')
 	global $db_logger, $sys, $usr;
 
 	$text = mb_substr($text, 0, 250 - mb_strlen($sys['request_uri'])) . ' - ' . $sys['request_uri'];
-	$sql = sed_sql_query("INSERT INTO $db_logger (log_date, log_ip, log_name, log_group, log_text) VALUES (" . (int)$sys['now_offset'] . ", '" . $usr['ip'] . "', '" . sed_sql_prep($usr['name']) . "', '$group', '" . sed_sql_prep($text) . "')");
+	$sql = sed_sql_query("INSERT INTO $db_logger (log_date, log_ip, log_name, log_group, log_text) VALUES (" . (int)$sys['now_offset'] . ", '" . sed_sql_prep($usr['ip']) . "', '" . sed_sql_prep($usr['name']) . "', '$group', '" . sed_sql_prep($text) . "')");
 	return;
 }
 
@@ -5021,7 +5090,7 @@ function sed_shield_clearaction()
 {
 	global $db_shield, $usr;
 
-	$sql = sed_sql_query("UPDATE $db_shield SET shield_action='' WHERE shield_ip='" . $usr['ip'] . "'");
+	$sql = sed_sql_query("UPDATE $db_shield SET shield_action='' WHERE shield_ip='" . sed_sql_prep($usr['ip']) . "'");
 	return;
 }
 
@@ -5085,7 +5154,7 @@ function sed_shield_update($shield_add, $shield_newaction)
 		$shield_newlimit = $sys['now'] + floor($shield_add * $cfg['shieldtadjust'] / 100);
 		$shield_newaction = sed_sql_prep($shield_newaction);
 		$sql = sed_sql_query("INSERT INTO $db_shield (shield_ip, shield_lastseen, shield_hammer, shield_limit, shield_action)
-			VALUES ('" . $usr['ip'] . "', " . (int)$sys['now'] . ", 0, " . (int)$shield_newlimit . ", '" . $shield_newaction . "')
+			VALUES ('" . sed_sql_prep($usr['ip']) . "', " . (int)$sys['now'] . ", 0, " . (int)$shield_newlimit . ", '" . $shield_newaction . "')
 			ON DUPLICATE KEY UPDATE shield_limit = " . (int)$shield_newlimit . ", shield_action = '" . $shield_newaction . "'");
 	}
 	return;
@@ -5463,7 +5532,7 @@ function sed_title($mask, $tags, $data)
  */
 function sed_unique($l = 16)
 {
-	return (mb_substr(md5(mt_rand(0, 1000000)), 0, $l));
+	return (substr(md5(uniqid(mt_rand(), true)), 0, $l));
 }
 
 /** 
@@ -5740,7 +5809,10 @@ function sed_sefurlredirect()
  */
 function sed_replacespace($text, $separator = '_')
 {
-	$text = preg_replace('|\s+|', $separator, $text);
+	if ($text === null || $text === '') {
+		return '';
+	}
+	$text = preg_replace('|\s+|', $separator, (string)$text);
 	return ($text);
 }
 
@@ -5756,6 +5828,9 @@ function sed_replacespace($text, $separator = '_')
  */
 function sed_valid_base64($s)
 {
+	if ($s === null || $s === '') {
+		return false;
+	}
 	// Check if there are valid base64 characters
 	if (!preg_match('/^[a-zA-Z0-9\/\r\n+]*={0,2}$/', $s)) return false;
 
@@ -5912,6 +5987,10 @@ function sed_extrafield_add($sql_table, $name, $type, $size = 255, $default = ''
 	$table_prefix = $cfg['sqldbprefix'];
 	$type = strtolower($type);
 
+	if (!preg_match('/^[a-zA-Z0-9_]+$/', $name) || !preg_match('/^[a-zA-Z0-9_]+$/', $sql_table)) {
+		return false;
+	}
+
 	/* === Checks: already exists === */
 	$res = sed_sql_query("SELECT dic_code FROM $db_dic WHERE dic_extra_location = '" . sed_sql_prep($sql_table) . "'");
 	while ($row = sed_sql_fetchassoc($res)) {
@@ -6008,7 +6087,11 @@ function sed_extrafield_add($sql_table, $name, $type, $size = 255, $default = ''
 	}
 
 	if (!empty($extra)) {
-		$sqltype .= ' ' . trim($extra);
+		$extra_clean = trim($extra);
+		if (!preg_match('/^(UNSIGNED|ZEROFILL|AUTO_INCREMENT|BINARY|ON UPDATE CURRENT_TIMESTAMP|\s+)+$/i', $extra_clean)) {
+			return false;
+		}
+		$sqltype .= ' ' . $extra_clean;
 	}
 
 	/* === Attributes: NULL/NOT NULL + DEFAULT === */
@@ -6080,6 +6163,10 @@ function sed_extrafield_update($sql_table, $name, $type, $size = 255, $default =
 
 	$table_prefix = $cfg['sqldbprefix'];
 	$type = strtolower($type);
+
+	if (!preg_match('/^[a-zA-Z0-9_]+$/', $name) || !preg_match('/^[a-zA-Z0-9_]+$/', $sql_table)) {
+		return false;
+	}
 
 	/* === Existence checks === */
 	$count_dic = sed_sql_query("SELECT COUNT(*) FROM $db_dic
@@ -6175,6 +6262,9 @@ function sed_extrafield_update($sql_table, $name, $type, $size = 255, $default =
 	}
 
 	if (!empty($extra_to_use)) {
+		if (!preg_match('/^(UNSIGNED|ZEROFILL|AUTO_INCREMENT|BINARY|ON UPDATE CURRENT_TIMESTAMP|\s+)+$/i', $extra_to_use)) {
+			return false;
+		}
 		$sqltype .= ' ' . $extra_to_use;
 	}
 

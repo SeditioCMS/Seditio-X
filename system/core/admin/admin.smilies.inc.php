@@ -8,7 +8,7 @@ https://seditio.org
 [BEGIN_SED]
 File=system/core/admin/admin.smilies.inc.php
 Version=186
-Updated=2026-sep-21
+Updated=2026-oct-23
 Type=Core.admin
 Author=Seditio Team
 Description=Administration panel
@@ -35,19 +35,21 @@ $urlpaths[sed_url("admin", "m=smilies")] =  $L['Smilies'];
 $admintitle = $L['Smilies'];
 
 if ($a == 'update') {
+	sed_check_xg();
 	$s = sed_import('s', 'P', 'ARR');
 	foreach ($s as $i => $k) {
 		$sql = sed_sql_query("UPDATE $db_smilies SET
 			smilie_code='" . sed_sql_prep($s[$i]['code']) . "',
 			smilie_image='" . sed_sql_prep($s[$i]['image']) . "',
 			smilie_text='" . sed_sql_prep($s[$i]['text']) . "',
-			smilie_order='" . sed_sql_prep($s[$i]['order']) . "'
-			WHERE smilie_id='$i'");
+			smilie_order='" . (int)$s[$i]['order'] . "'
+			WHERE smilie_id='" . (int)$i . "'");
 	}
 	sed_cache_clear('sed_smilies');
 	sed_redirect(sed_url("admin", "m=smilies", "", true), false, ['msg' => '917']);
 	exit;
 } elseif ($a == 'add') {
+	sed_check_xg();
 	$nsmiliecode = sed_sql_prep(sed_import('nsmiliecode', 'P', 'TXT'));
 	$nsmilieimage = sed_sql_prep(sed_import('nsmilieimage', 'P', 'TXT'));
 	$nsmilietext = sed_sql_prep(sed_import('nsmilietext', 'P', 'TXT'));
@@ -65,7 +67,7 @@ if ($a == 'update') {
 } elseif ($a == 'delete') {
 	sed_check_xg();
 	$id = sed_import('id', 'G', 'INT');
-	$sql = sed_sql_query("DELETE FROM $db_smilies WHERE smilie_id='$id'");
+	$sql = sed_sql_query("DELETE FROM $db_smilies WHERE smilie_id='" . (int)$id . "'");
 
 	/* === Hook for the plugins === */
 	foreach (sed_getextplugins('admin.smilies.deleted') as $pl) {
@@ -110,13 +112,13 @@ while ($row = sed_sql_fetchassoc($sql)) {
 }
 
 $t->assign(array(
-	"SMILIES_UPDATE_SEND" => sed_url("admin", "m=smilies&a=update")
+	"SMILIES_UPDATE_SEND" => sed_url("admin", "m=smilies&a=update&" . sed_xg())
 ));
 
 $t->parse("ADMIN_SMILIES.SMILIES_LIST");
 
 $t->assign(array(
-	"SMILIE_ADD_SEND" => sed_url("admin", "m=smilies&a=add"),
+	"SMILIE_ADD_SEND" => sed_url("admin", "m=smilies&a=add&" . sed_xg()),
 	"SMILIE_ADD_CODE" => sed_textbox("nsmiliecode", isset($nsmiliecode) ? $nsmiliecode : '', 10, 16),
 	"SMILIE_ADD_IMAGEURL" => sed_textbox("nsmilieimage", isset($nsmilieimage) ? $nsmilieimage : '', 32, 128),
 	"SMILIE_ADD_TEXT" => sed_textbox("nsmilietext", isset($nsmilietext) ? $nsmilietext : '', 12, 64),

@@ -8,7 +8,7 @@ https://seditio.org
 [BEGIN_SED]
 File=system/common.php
 Version=186
-Updated=2026-oct-15
+Updated=2026-oct-23
 Type=Core
 Author=Seditio Team
 Description=Common
@@ -63,7 +63,9 @@ if ($cfg['cache']) {
 	if ($sql) {
 		while ($row = sed_sql_fetchassoc($sql)) {
 			$newvar = $row['c_name']; //fix 178 php7.1
-			$$newvar = unserialize($row['c_value']);
+			if (strpos($newvar, 'sed_') === 0 && preg_match('/^sed_[a-zA-Z0-9_]+$/', $newvar)) {
+				$$newvar = sed_unserialize($row['c_value']);
+			}
 		}
 	}
 }
@@ -243,12 +245,15 @@ if (isset($rsedition) && $rsedition > 0 && $cfg['authmode'] > 0) {
 	}
 
 	if ($cfg['ipcheck']) {
-		$sql = sed_sql_query("SELECT * FROM $db_users WHERE user_id='$rsedition' AND user_secret='$rseditiop' AND user_lastip='" . $usr['ip'] . "'");
+		$sql = sed_sql_query("SELECT * FROM $db_users WHERE user_id='$rsedition' AND user_secret='$rseditiop' AND user_lastip='" . sed_sql_prep($usr['ip']) . "'");
 	} else {
 		$sql = sed_sql_query("SELECT * FROM $db_users WHERE user_id='$rsedition' AND user_secret='$rseditiop'");
 	}
 
 	if ($row = sed_sql_fetcharray($sql)) {
+		if (empty($row['user_secret']) || !hash_equals($row['user_secret'], $rseditiop)) {
+			sed_diefatal('Wrong value for the password.');
+		}
 		if ($row['user_maingrp'] > 3) {
 			$usr['id'] = $row['user_id'];
 			$usr['sessionid'] = ($cfg['authmode'] == 1) ? sed_hash($row['user_lastvisit'], 2) : sed_hash($row['user_secret'], 2);
@@ -261,7 +266,7 @@ if (isset($rsedition) && $rsedition > 0 && $cfg['authmode'] > 0) {
 			$usr['skin'] = ($cfg['forcedefaultskin']) ? $cfg['defaultskin'] : $row['user_skin'];
 			$usr['lang'] = ($cfg['forcedefaultlang']) ? $cfg['defaultlang'] : $row['user_lang'];
 			$usr['newpm'] = $row['user_newpm'];
-			$usr['auth'] = !empty($row['user_auth']) ? unserialize($row['user_auth']) : array();
+			$usr['auth'] = !empty($row['user_auth']) ? sed_unserialize($row['user_auth']) : array();
 			$usr['level'] = $sed_groups[$usr['maingrp']]['level'];
 			$usr['profile'] = $row;
 			$sys['sql_update_lastvisit'] = '';
@@ -278,7 +283,7 @@ if (isset($rsedition) && $rsedition > 0 && $cfg['authmode'] > 0) {
 				$sys['sql_update_auth'] = ", user_auth='" . serialize($usr['auth']) . "'";
 			}
 
-			$sql = sed_sql_query("UPDATE $db_users SET user_lastlog='" . $sys['now_offset'] . "', user_lastip='" . $usr['ip'] . "', user_sid='" . $usr['sessionid'] . "', user_logcount=user_logcount+1 " . $sys['sql_update_lastvisit'] . " " . $sys['sql_update_auth'] . " WHERE user_id='" . $usr['id'] . "'");
+			$sql = sed_sql_query("UPDATE $db_users SET user_lastlog='" . $sys['now_offset'] . "', user_lastip='" . sed_sql_prep($usr['ip']) . "', user_sid='" . $usr['sessionid'] . "', user_logcount=user_logcount+1 " . $sys['sql_update_lastvisit'] . " " . $sys['sql_update_auth'] . " WHERE user_id='" . $usr['id'] . "'");
 		}
 	}
 } else {
@@ -436,7 +441,7 @@ if ($cfg['shieldenabled']) {
 		sed_sql_query("DELETE FROM $db_shield WHERE shield_lastseen < $shield_timedout AND shield_limit < " . (int)$sys['now']);
 	}
 
-	$sql = sed_sql_query("SELECT shield_limit, shield_action, shield_hammer, shield_lastseen FROM $db_shield WHERE shield_ip='" . $usr['ip'] . "' LIMIT 1");
+	$sql = sed_sql_query("SELECT shield_limit, shield_action, shield_hammer, shield_lastseen FROM $db_shield WHERE shield_ip='" . sed_sql_prep($usr['ip']) . "' LIMIT 1");
 	if ($row = sed_sql_fetchassoc($sql)) {
 		$shield_limit = (int)$row['shield_limit'];
 		$shield_action = $row['shield_action'];
